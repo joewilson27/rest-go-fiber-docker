@@ -1,0 +1,28 @@
+// important notes
+
+src = https://divrhino.com/articles/rest-api-docker-go-fiber-from-scratch/
+
+Dockerfile = contains the instructions of API Container
+docker-compose.yml = manage multiple containers
+
+run app command:
+docker compose up
+
+access/enter shell, in this tutor we want to access web services as its define in docker-compose.yml:
+docker compose run --service-ports web bash
+
+if you want exit of the container shell environmnent:
+exit
+
+so, if you want to install and add package to your container project in docker, you
+have to access with the command above
+
+run project go on container is the same as usual
+go run cmd/main.go -b 0.0.0.0
+
+At the moment, every time we want to start our gofiber app, we NEED to ENTER our web service
+container to run the command.
+
+
+
+
