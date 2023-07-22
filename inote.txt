@@ -1,6 +1,7 @@
 // important notes
 
 src = https://divrhino.com/articles/rest-api-docker-go-fiber-from-scratch/
+yt = https://www.youtube.com/watch?v=p08c0-99SyU
 
 Dockerfile = contains the instructions of API Container
 docker-compose.yml = manage multiple containers
@@ -23,6 +24,50 @@ go run cmd/main.go -b 0.0.0.0
 At the moment, every time we want to start our gofiber app, we NEED to ENTER our web service
 container to run the command.
 
+BUT...
 
+It would be NICE if we could just run our dockerised app from our host machine (jadi maskudnya disini
+untuk run application di mesin komputer kita, bukan dari dalam container docker).
 
+We will need to make a few changes to our Dockerfile and docker-compose.yml files to achieve this.
+
+So you can do this by updating your Dockerfile and docker-compose.yml.
+Read on the articles for more information
+
+khusus di docker-compose.yml, we add command for running as below:
+go run cmd/main.go -b 0.0.0.0
+
+command tersebut akan 'nge-map' ke command: docker compose up
+jadi ketika kita nanti jalanin compose up dari host komputer kita (tidak dari container project docker)
+maka ia akan menjalankan go run project kita
+
+then, you can try to exit your container project docker on CLI, then run the command:
+docker compose up
+
+project lo akan TETAP JALAN sama seperti lu ng-running project dari dalam container 
+
+HOT RELOADING
+It would be great if we had a mechanism to rebuild our app WHENEVER we made changes to the code. 
+We can use a package called air to help us achieve this.
+
+Jadi ini metode agar tiap kali kita merubah kodingan, tampilan pada project kita di browser / system akan
+otomatis update TANPA HARUS docker compose up ulang
+
+We’ll want to install it as part of our docker setup, so let’s open up our Dockerfile again and add a
+RUN instruction to install the air package.
+
+bikin file baru .air.toml lalu isi filenya dengan meng-copy dari https://github.com/cosmtrek/air pada file air_example.toml
+lalu edit di bagian [build] dan sesuaikan dengan dimana file yang ingin kita pointing utk di RELOADING
+pada contoh ini kita mau untuk file main.go yang ada pada cmd/
+
+lalu, setelah setting air selesai, kita bisa ganti command pada file docker-compose.yml 
+command: go run cmd/main.go -b 0.0.0.0
+to
+command: air cmd/main.go -b 0.0.0.0
+
+after that, because we've a made few changes to Dockerfile (& also on docker-compose.yml) instructions, rebuild your project 
+with command: 
+docker compose build
+
+then type command 'docker compose up' again to running the project
 
