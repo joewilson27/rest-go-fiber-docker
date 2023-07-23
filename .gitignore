@@ -39,3 +39,4 @@ Thumbs.db
 # Setting Configuration #
 #########################
 .env
+tmp/main
