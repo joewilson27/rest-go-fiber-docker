@@ -3,6 +3,8 @@
 src = https://divrhino.com/articles/rest-api-docker-go-fiber-from-scratch/
 yt = https://www.youtube.com/watch?v=p08c0-99SyU
 
+current = yt part 2 1:59
+
 Dockerfile = contains the instructions of API Container
 docker-compose.yml = manage multiple containers
 
@@ -70,4 +72,8 @@ with command:
 docker compose build
 
 then type command 'docker compose up' again to running the project
+
+
+The {{embed}} is where our individual page content will be rendered.
+{{embed}} dalam main.html yang kita jadikan global layout
 
