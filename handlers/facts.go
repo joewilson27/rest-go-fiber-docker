@@ -1,14 +1,17 @@
 package handlers
 
 import (
+	"encoding/json"
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
-	"github.com/joewilson27/rest-go-fiber-docker/database"
+	"github.com/joewilson27/rest-go-fiber-docker/database/db"
 	"github.com/joewilson27/rest-go-fiber-docker/models"
 )
 
 func ListFacts(c *fiber.Ctx) error {
 	facts := []models.Fact{}
-	database.DB.Db.Find(&facts)
+	db.DB.Find(&facts)
 
 	//return c.Status(http.StatusOK).JSON(facts)
 
@@ -39,7 +42,7 @@ func CreateFact(c *fiber.Ctx) error {
 		})
 	}
 
-	result := database.DB.Db.Create(&fact)
+	result := db.DB.Create(&fact)
 	if result.Error != nil {
 		return NewFactView(c)
 	}
@@ -61,7 +64,7 @@ func ShowFact(c *fiber.Ctx) error {
 	fact := models.Fact{}
 	id := c.Params("id")
 
-	result := database.DB.Db.Where("id = ?", id).First(&fact)
+	result := db.DB.Where("id = ?", id).First(&fact)
 	if result.Error != nil {
 		return NotFound(c)
 	}
@@ -76,7 +79,7 @@ func EditFact(c *fiber.Ctx) error {
 	fact := models.Fact{}
 	id := c.Params("id")
 
-	result := database.DB.Db.Where("id = ?", id).First(&fact)
+	result := db.DB.Where("id = ?", id).First(&fact)
 	if result.Error != nil {
 		return NotFound(c)
 	}
@@ -97,9 +100,17 @@ func UpdateFact(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusServiceUnavailable).SendString(err.Error())
 	}
 
-	// Write updated values to the database
-	result := database.DB.Db.Model(&fact).Where("id = ?", id).Updates(fact)
-	if result.Error != nil {
+	// // Write updated values to the database
+	// result := database.DB.Db.Model(&fact).Where("id = ?", id).Updates(fact)
+	// if result.Error != nil {
+	// 	return EditFact(c)
+	// }
+	jsonString, _ := json.Marshal(fact)
+	var factRequest models.Fact
+	json.Unmarshal(jsonString, &factRequest)
+	updId, _ := strconv.Atoi(id)
+	factRequest.ID = updId
+	if err := factRequest.Update(); err != nil {
 		return EditFact(c)
 	}
 
@@ -110,7 +121,7 @@ func DeleteFact(c *fiber.Ctx) error {
 	fact := models.Fact{}
 	id := c.Params("id")
 
-	result := database.DB.Db.Where("id = ?", id).Delete(&fact)
+	result := db.DB.Where("id = ?", id).Delete(&fact)
 	if result.Error != nil {
 		return NotFound(c)
 	}
